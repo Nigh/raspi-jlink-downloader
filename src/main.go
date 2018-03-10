@@ -28,8 +28,23 @@ var cmd bytes.Buffer
 //setpc 0
 //g
 //q
-var hexfile string = "/home/pi/Downloads/test.hex"
-var cmdfile string = "test.jlink"
+var hexfile string = "/home/pi/tmp/firmware.hex"
+var cmdfile string = "download.jlink"
+
+func createRamFolder() {
+	// 建立tmp目录，若存在则忽略
+	exe := exec.Command("mkdir", "-p /home/pi/tmp")
+	exe.Output()
+	// 将tmp目录挂载到ram中，并分配16m的空间
+	exe = exec.Command("mount", "-t ramfs -o size=16m ramfs /home/pi/tmp")
+	exe.Output()
+}
+
+func decHex() {
+	Decrypt("/home/pi/firmware.enc", "/home/pi/tmp/firmware.hex")
+	//	exe := exec.Command("mv", "firmware.hex /home/pi/tmp")
+	//	exe.Output()
+}
 
 func init() {
 	runtime.GOMAXPROCS(1)
@@ -47,6 +62,8 @@ func init() {
 	f, _ := os.Create(cmdfile) //创建文件
 	io.WriteString(f, cmd.String())
 	f.Close()
+	createRamFolder()
+	decHex()
 }
 
 func checkFileIsExist(filename string) bool {
