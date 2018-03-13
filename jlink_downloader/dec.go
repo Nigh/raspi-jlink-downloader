@@ -21,7 +21,7 @@ func Decrypt(file string, out string) {
 	plain, _ = base64.StdEncoding.DecodeString(string(plain))
 	DecryptMode.CryptBlocks(plain, plain)
 	plain = PKCS5remove(plain)
-	err := ioutil.WriteFile(out, plain, 0777)
+	err := ioutil.WriteFile(out, plain, 0600)
 	if err != nil {
 		fmt.Println("Decrypt Failed!")
 	} else {
