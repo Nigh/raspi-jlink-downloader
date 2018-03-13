@@ -8,7 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"os/signal"
-	"runtime"
+	//"runtime"
 	"syscall"
 	"time"
 
@@ -28,26 +28,26 @@ var cmd bytes.Buffer
 //setpc 0
 //g
 //q
-var hexfile string = "/home/pi/tmp/firmware.hex"
+var hexfile string = "/dev/shm/firmware.hex"
 var cmdfile string = "download.jlink"
 
 func createRamFolder() {
 	// 建立tmp目录，若存在则忽略
-	exe := exec.Command("mkdir", "-p /home/pi/tmp")
-	exe.Output()
+	//exe = exec.Command("mkdir", "-p /tmpjlink")
+	//	exe.Output()
 	// 将tmp目录挂载到ram中，并分配16m的空间
-	exe = exec.Command("mount", "-t ramfs -o size=16m ramfs /home/pi/tmp")
-	exe.Output()
+	//	exe = exec.Command("mount", "-t ramfs -o size=16m ramfs /tmpjlink")
+	//	exe.Output()
 }
 
 func decHex() {
-	Decrypt("/home/pi/firmware.enc", "/home/pi/tmp/firmware.hex")
+	Decrypt("/home/pi/firmware.enc", hexfile)
 	//	exe := exec.Command("mv", "firmware.hex /home/pi/tmp")
 	//	exe.Output()
 }
 
 func init() {
-	runtime.GOMAXPROCS(1)
+	// runtime.GOMAXPROCS(1)
 	rand.Seed(time.Now().UnixNano())
 	cmd.WriteString("device nrf52832_xxaa\n")
 	cmd.WriteString("si 1\n")
@@ -112,7 +112,7 @@ func main() {
 	G.High()
 	B.High()
 
-	heartbeat := time.Tick(1737 * time.Millisecond)
+	heartbeat := time.Tick(1337 * time.Millisecond)
 	go func() {
 		for {
 			<-heartbeat
