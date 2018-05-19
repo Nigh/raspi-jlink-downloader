@@ -186,19 +186,50 @@ func download() {
 	}
 }
 
+func shutdown() {
+	exe := exec.Command("shutdown", "now")
+	exe.Run()
+}
+
 func keyscan(event chan string) {
 	var state rpio.State = button.Read()
 	var state2 rpio.State = button2.Read()
+	var t int = 0
 	scanner := time.NewTicker(40 * time.Millisecond)
 	for {
 		select {
 		case <-scanner.C:
 			temp := button.Read()
+			if temp == 0 {
+				t += 1
+				if t == 70 {
+					go func() {
+						for j := 1; j <= 3; j++ {
+							Buzzer.Low()
+							<-time.After(100 * time.Millisecond)
+							Buzzer.High()
+							R.High()
+							G.High()
+							B.High()
+							<-time.After(100 * time.Millisecond)
+							R.Low()
+							G.Low()
+							B.Low()
+						}
+					}()
+				}
+			}
 			if state != temp {
 				state = temp
 				if state == 1 {
-					event <- "B1 RisingEdge"
+					if t < 25 {
+						event <- "B1 RisingEdge"
+					}
+					if t > 70 {
+						event <- "B1 Longpress"
+					}
 				} else {
+					t = 0
 					event <- "B1 FallingEdge"
 				}
 			}
@@ -220,8 +251,10 @@ func eventhandler(event chan string) {
 		select {
 		case str := <-event:
 			fmt.Println(str)
-			if str == "B1 FallingEdge" {
+			if str == "B1 RisingEdge" {
 				download()
+			} else if str == "B1 Longpress" {
+				shutdown()
 			}
 		}
 	}
