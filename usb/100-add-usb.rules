@@ -1,0 +1,2 @@
+ACTION=="add", KERNEL=="sd[a-z][0-9]", RUN+="/sbin/mount-usb.sh %k"
+ACTION=="remove", KERNEL=="sd[a-z][0-9]", RUN+="/sbin/umount-usb.sh %k"
