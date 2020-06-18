@@ -41,7 +41,7 @@ func createRamFolder() {
 }
 
 func decHex() {
-	Decrypt("/home/pi/firmware.enc", hexfile)
+	Decrypt("/boot/firmware.enc", hexfile)
 	//	exe := exec.Command("mv", "firmware.hex /home/pi/tmp")
 	//	exe.Output()
 }
