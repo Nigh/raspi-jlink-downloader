@@ -83,7 +83,7 @@ var B rpio.Pin
 var Buzzer rpio.Pin
 
 func main() {
-	fmt.Printf("Kurumi Programming System Initial...")
+	fmt.Printf("Raspi Programming System Initial...")
 	if rpio.Open() == nil {
 		fmt.Println("[OK]")
 	} else {
